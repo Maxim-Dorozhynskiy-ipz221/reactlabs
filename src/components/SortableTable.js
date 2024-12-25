@@ -6,18 +6,38 @@ const SortableTable = () => {
     { name: "Jane", age: 22 },
     { name: "Bob", age: 30 },
   ]);
-  
+  const [sortConfig, setSortConfig] = useState(null);
+
   const handleSort = (key) => {
-    const sortedData = [...data].sort((a, b) => a[key] > b[key] ? 1 : -1);
+    let direction = "ascending";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    const sortedData = [...data].sort((a, b) => {
+      if (a[key] < b[key]) return direction === "ascending" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "ascending" ? 1 : -1;
+      return 0;
+    });
     setData(sortedData);
+    setSortConfig({ key, direction });
   };
 
   return (
     <table>
       <thead>
         <tr>
-          <th onClick={() => handleSort("name")}>Name</th>
-          <th onClick={() => handleSort("age")}>Age</th>
+          <th 
+            onClick={() => handleSort("name")} 
+            style={{ color: sortConfig?.key === "name" ? "blue" : "black" }}
+          >
+            Name
+          </th>
+          <th 
+            onClick={() => handleSort("age")}
+            style={{ color: sortConfig?.key === "age" ? "blue" : "black" }}
+          >
+            Age
+          </th>
         </tr>
       </thead>
       <tbody>
